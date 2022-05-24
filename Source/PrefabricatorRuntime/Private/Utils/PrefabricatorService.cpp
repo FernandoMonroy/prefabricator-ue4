@@ -42,9 +42,12 @@ AActor* IPrefabricatorService::SpawnActor(TSubclassOf<AActor> InClass, const FTr
 }
 
 /////////////////////////// FPrefabricatorRuntimeService /////////////////////////// 
-void FPrefabricatorRuntimeService::ParentActors(AActor* ParentActor, AActor* ChildActor)
+void FPrefabricatorRuntimeService::ParentActors(AActor* ParentActor, AActor* ChildActor, FName Socket)
 {
-	ChildActor->AttachToActor(ParentActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+	if(Socket.IsNone())
+		ChildActor->AttachToActor(ParentActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false));
+	else
+		ChildActor->AttachToActor(ParentActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, false), Socket);
 }
 
 void FPrefabricatorRuntimeService::SelectPrefabActor(AActor* PrefabActor)
@@ -53,6 +56,11 @@ void FPrefabricatorRuntimeService::SelectPrefabActor(AActor* PrefabActor)
 }
 
 void FPrefabricatorRuntimeService::GetSelectedActors(TArray<AActor*>& OutActors)
+{
+	// Not supported in runtime builds (and not necessary)
+}
+
+void FPrefabricatorRuntimeService::GetSelectedActor(AActor*& OutActor)
 {
 	// Not supported in runtime builds (and not necessary)
 }

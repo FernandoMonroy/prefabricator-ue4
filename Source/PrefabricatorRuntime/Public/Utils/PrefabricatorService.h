@@ -28,9 +28,10 @@ class PREFABRICATORRUNTIME_API IPrefabricatorService {
 public:
 	virtual ~IPrefabricatorService() {}
 
-	virtual void ParentActors(AActor* ParentActor, AActor* ChildActor) = 0;
+	virtual void ParentActors(AActor* ParentActor, AActor* ChildActor, FName Socket = "") = 0;
 	virtual void SelectPrefabActor(AActor* PrefabActor) = 0;
 	virtual void GetSelectedActors(TArray<AActor*>& OutActors) = 0;
+	virtual void GetSelectedActor(AActor*& OutActor) = 0;
 	virtual int GetNumSelectedActors() = 0;
 	virtual UPrefabricatorAsset* CreatePrefabAsset() = 0;
 	virtual FVector SnapToGrid(const FVector& InLocation) { return InLocation; }
@@ -45,9 +46,10 @@ public:
 
 class PREFABRICATORRUNTIME_API FPrefabricatorRuntimeService : public IPrefabricatorService {
 public:
-	virtual void ParentActors(AActor* ParentActor, AActor* ChildActor) override;
+	virtual void ParentActors(AActor* ParentActor, AActor* ChildActor, FName Socket = FName()) override;
 	virtual void SelectPrefabActor(AActor* PrefabActor) override;
 	virtual void GetSelectedActors(TArray<AActor*>& OutActors) override;
+	virtual void GetSelectedActor(AActor*& OutActor) override;
 	virtual int GetNumSelectedActors() override;
 	virtual UPrefabricatorAsset* CreatePrefabAsset() override;
 };

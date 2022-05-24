@@ -58,11 +58,19 @@ class PREFABRICATORRUNTIME_API FPrefabTools {
 public:
 	static bool CanCreatePrefab();
 	static void CreatePrefab();
+	static bool CanCreatePrefabFromParent();
+	static void CreatePrefabFromParent();
 	static APrefabActor* CreatePrefabFromActors(const TArray<AActor*>& Actors);
+	static APrefabActor* CreatePrefabFromActorParent(AActor*& InActor);
 	static void AssignAssetUserData(AActor* InActor, const FGuid& InItemID, APrefabActor* Prefab);
 
 	static void SaveStateToPrefabAsset(APrefabActor* PrefabActor);
+	static void SaveStateToPrefabAsset(APrefabActor* PrefabActor, const AActor* ParentActor, const TArray<AActor*> InActors);
+	
 	static void LoadStateFromPrefabAsset(APrefabActor* PrefabActor, const FPrefabLoadSettings& InSettings = FPrefabLoadSettings());
+	static void ConstructionModeFromPrefab(UPrefabricatorAsset*& PrefabAsset, APrefabActor* PrefabActor, const FPrefabLoadSettings& InSettings);
+	static void ConstructionModeFromParent(UPrefabricatorAsset*& PrefabAsset, APrefabActor* PrefabActor, const FPrefabLoadSettings& InSettings);
+
 
 	static void FixupCrossReferences(const TArray<UPrefabricatorProperty*>& PrefabProperties, UObject* ObjToWrite, TMap<FGuid, AActor*>& PrefabItemToActorMap);
 
@@ -73,7 +81,7 @@ public:
 	static bool ShouldIgnorePropertySerialization(const FName& PropertyName);
 	static bool ShouldForcePropertySerialization(const FName& PropertyName);
 
-	static void ParentActors(AActor* ParentActor, AActor* ChildActor);
+	static void ParentActors(AActor* ParentActor, AActor* ChildActor, FName Socket = FName());
 	static void SelectPrefabActor(AActor* PrefabActor);
 	static void GetSelectedActors(TArray<AActor*>& OutActors);
 	static int GetNumSelectedActors();

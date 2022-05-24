@@ -22,7 +22,7 @@
 #include "ScopedTransaction.h"
 #include "ThumbnailRendering/SceneThumbnailInfo.h"
 
-void FPrefabricatorEditorService::ParentActors(AActor* ParentActor, AActor* ChildActor)
+void FPrefabricatorEditorService::ParentActors(AActor* ParentActor, AActor* ChildActor, FName Socket)
 {
 	/*
 	if (GEditor) {
@@ -57,7 +57,10 @@ void FPrefabricatorEditorService::ParentActors(AActor* ParentActor, AActor* Chil
 	}
 
 	// Snap to socket if a valid socket name was provided, otherwise attach without changing the relative transform
-	ChildRoot->AttachToComponent(ParentRoot, FAttachmentTransformRules::KeepWorldTransform, NAME_None);
+	if(Socket.IsNone())
+		ChildRoot->AttachToComponent(ParentRoot, FAttachmentTransformRules::KeepWorldTransform, NAME_None);
+	else
+		ChildRoot->AttachToComponent(ParentRoot, FAttachmentTransformRules::KeepWorldTransform, Socket);
 }
 
 void FPrefabricatorEditorService::SelectPrefabActor(AActor* PrefabActor)
@@ -79,6 +82,23 @@ void FPrefabricatorEditorService::GetSelectedActors(TArray<AActor*>& OutActors)
 			if (Actor)
 			{
 				OutActors.Add(Actor);
+			}
+		}
+	}
+}
+
+void FPrefabricatorEditorService::GetSelectedActor(AActor*& OutActor)
+{
+	if (GEditor) {
+		USelection* SelectedActors = GEditor->GetSelectedActors();
+		for (FSelectionIterator Iter(*SelectedActors); Iter; ++Iter)
+		{
+			// We only care about actors that are referenced in the world for literals, and also in the same level as this blueprint
+			AActor* Actor = Cast<AActor>(*Iter);
+			if (Actor)
+			{
+				OutActor = Actor;
+				break;
 			}
 		}
 	}

@@ -6,9 +6,10 @@
 
 class PREFABRICATOREDITOR_API FPrefabricatorEditorService : public IPrefabricatorService {
 public:
-	virtual void ParentActors(AActor* ParentActor, AActor* ChildActor) override;
+	virtual void ParentActors(AActor* ParentActor, AActor* ChildActor, FName Socket = FName()) override;
 	virtual void SelectPrefabActor(AActor* PrefabActor) override;
 	virtual void GetSelectedActors(TArray<AActor*>& OutActors) override;
+	virtual void GetSelectedActor(AActor*& OutActor) override;	
 	virtual int GetNumSelectedActors() override;
 	virtual UPrefabricatorAsset* CreatePrefabAsset() override;
 	virtual FVector SnapToGrid(const FVector& InLocation) override;

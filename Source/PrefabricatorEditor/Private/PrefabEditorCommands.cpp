@@ -20,15 +20,24 @@ FPrefabricatorCommands::FPrefabricatorCommands() : TCommands<FPrefabricatorComma
 {
 }
 
-void FPrefabricatorCommands::RegisterCommands() {
-	UI_COMMAND(CreatePrefab, "Create Prefab (from selection)", "Create a new prefab from selection", EUserInterfaceActionType::Button, FInputChord(EKeys::Enter));
-
+void FPrefabricatorCommands::RegisterCommands()
+{
 	LevelMenuActionList = MakeShareable(new FUICommandList);
+	
+	UI_COMMAND(CreatePrefab, "Create Prefab (from selection)", "Create a new prefab from selection", EUserInterfaceActionType::Button, FInputChord(EKeys::Enter));
+	UI_COMMAND(CreatePrefabFromParent, "Create Prefab (from parent selection)", "Create a new prefab from parent selection", EUserInterfaceActionType::Button, FInputChord(EKeys::Enter));
+
 
 	LevelMenuActionList->MapAction(
 		CreatePrefab,
 		FExecuteAction::CreateStatic(&FPrefabTools::CreatePrefab),
 		FCanExecuteAction::CreateStatic(&FPrefabTools::CanCreatePrefab)
+	);
+
+	LevelMenuActionList->MapAction(
+		CreatePrefabFromParent,
+		FExecuteAction::CreateStatic(&FPrefabTools::CreatePrefabFromParent),
+		FCanExecuteAction::CreateStatic(&FPrefabTools::CanCreatePrefabFromParent)
 	);
 }
 

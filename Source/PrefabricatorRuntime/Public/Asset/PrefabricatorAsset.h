@@ -1,9 +1,12 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-21, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/EngineTypes.h"
+
 #include "PrefabricatorAsset.generated.h"
+
+class APrefabActor;
 
 USTRUCT()
 struct PREFABRICATORRUNTIME_API FPrefabricatorPropertyAssetMapping {
@@ -67,7 +70,16 @@ struct PREFABRICATORRUNTIME_API FPrefabricatorActorData {
 	FGuid PrefabItemID;
 
 	UPROPERTY()
+	FName AttachedSocket;
+	
+	UPROPERTY()
+	FGuid ParentItemID;
+
+	UPROPERTY()
 	FTransform RelativeTransform;
+
+	UPROPERTY()
+	FTransform ParentRelativeTransform;
 
 	UPROPERTY()
 	FString ClassPath;
@@ -101,7 +113,7 @@ public:
 	virtual void PostSpawn_Implementation(APrefabActor* Prefab);
 };
 
-UCLASS(Blueprintable)
+UCLASS(Abstract, BlueprintType, Blueprintable)
 class PREFABRICATORRUNTIME_API UPrefabricatorAssetInterface : public UObject {
 	GENERATED_BODY()
 public:
@@ -125,10 +137,30 @@ enum class EPrefabricatorAssetVersion {
 	LatestVersion = LastVersionPlusOne -1
 };
 
+UENUM()
+enum class EPrefabConstructionMode
+{
+	FromPrefab,
+	FromParent
+};
+
 UCLASS(Blueprintable)
 class PREFABRICATORRUNTIME_API UPrefabricatorAsset : public UPrefabricatorAssetInterface {
 	GENERATED_UCLASS_BODY()
-public:
+
+public:	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FPrimaryAssetType AssetType;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGuid PrefabGUID;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName PrefabTagID;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	EPrefabConstructionMode ConstructionMode;
+	
 	UPROPERTY()
 	TArray<FPrefabricatorActorData> ActorData;
 
@@ -148,8 +180,19 @@ public:
 	UPROPERTY()
 	uint32 Version;
 
-public:
+public:	
+	UFUNCTION(CallInEditor, BlueprintCallable, Category="Prefab Asset")
+	void CopyPrefabGUID2Clipboard()
+	{
+		FGenericPlatformMisc::ClipboardCopy(*PrefabGUID.ToString());
+	}
+
 	virtual UPrefabricatorAsset* GetPrefabAsset(const FPrefabAssetSelectionConfig& InConfig) override;
+
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override
+	{		
+		return FPrimaryAssetId(AssetType, *PrefabGUID.ToString());
+	}
 };
 
 
